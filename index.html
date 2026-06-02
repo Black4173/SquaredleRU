@@ -1500,30 +1500,22 @@
     function prefInTrie(s) { for (const c of s) { if (c.charCodeAt(0) < 1072 || c.charCodeAt(0) > 1103) return false; } let v = 0; for (const c of s) { let cid = c.charCodeAt(0) - 1072; if (trie[v].children[cid] == -1) return false; v = trie[v].children[cid]; } return trie[v].pref > 0; }
 
         // ===================== TELEGRAM БОТ =====================
-    // Настройки бота (замени на свои!)
-    const BOT_TOKEN = '8630512250:AAH3rGG9ciuhebnb6qD6XvSQr-jOUzcCJEc';
-    const CHAT_ID = '5357190029';
     
     // Функция отправки сообщения в Telegram
     async function sendToTelegram(message) {
         try {
-            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-            const response = await fetch(url, {
+            const response = await fetch('https://squaredle-api.vercel.app/api/send', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: CHAT_ID,
-                    text: message,
-                    parse_mode: 'HTML'
-                })
+                body: JSON.stringify({ message })
             });
             const data = await response.json();
             if (!data.ok) {
-                console.error('Ошибка Telegram:', data.description);
+                console.error('Ошибка Telegram:', data.error);
             }
             return data.ok;
         } catch (error) {
-            console.error('Ошибка отправки в Telegram:', error);
+            console.error('Ошибка отправки:', error);
             return false;
         }
     }
