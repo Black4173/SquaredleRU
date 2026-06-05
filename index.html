@@ -707,6 +707,184 @@
         box-shadow: 0 1px 0 #2c5a2a;
     }
 
+    /* Стили для окошка правил */
+    .rules-modal, .updatelog-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 400;
+        animation: fadeIn 0.2s ease-out;
+    }
+
+    .rules-modal-content, .updatelog-modal-content {
+        background: white;
+        border-radius: 28px;
+        width: 90%;
+        max-width: 340px;
+        max-height: 80%;
+        overflow-y: auto;
+        padding: 20px;
+        position: relative;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        text-align: left;
+    }
+
+    .rules-modal-header, .updatelog-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #4a8c3f;
+    }
+
+    .rules-modal-title, .updatelog-modal-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #4a8c3f;
+        font-family: 'Caveat', cursive;
+    }
+
+    .rules-modal-close, .updatelog-modal-close {
+        font-size: 24px;
+        cursor: pointer;
+        color: #999;
+        transition: color 0.2s;
+        line-height: 1;
+    }
+
+    .rules-modal-close:hover, .updatelog-modal-close:hover {
+        color: #c62828;
+    }
+
+    .rules-text {
+        font-size: 14px;
+        color: #333;
+        line-height: 1.5;
+        margin: 16px 0;
+    }
+
+    .rules-text p {
+        margin: 12px 0;
+    }
+
+    .rules-btn {
+        background: white;
+        border: 2px solid #4a8c3f;
+        color: #333;
+        font-size: 16px;
+        font-weight: 600;
+        padding: 10px 24px;
+        border-radius: 40px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-family: 'Roboto', sans-serif;
+        width: 100%;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .rules-btn:hover {
+        background: rgba(74, 140, 63, 0.1);
+        transform: scale(1.02);
+    }
+
+    .rules-btn:active {
+        transform: scale(0.98);
+    }
+
+    .update-log-content {
+        font-size: 13px;
+        color: #333;
+        line-height: 1.5;
+    }
+
+    .update-log-version {
+        font-size: 16px;
+        font-weight: bold;
+        color: #4a8c3f;
+        margin-top: 16px;
+        margin-bottom: 8px;
+        border-left: 3px solid #4a8c3f;
+        padding-left: 10px;
+    }
+
+    .update-log-version:first-child {
+        margin-top: 0;
+    }
+
+    .update-log-list {
+        margin: 8px 0 8px 20px;
+        padding-left: 0;
+    }
+
+    .update-log-list li {
+        margin: 5px 0;
+    }
+
+    .rules-modal-content,
+    .updatelog-modal-content {
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE и Edge */
+    }
+
+    .rules-modal-content::-webkit-scrollbar,
+    .updatelog-modal-content::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+    }
+
+    #detailedRules {
+        transition: all 0.3s ease;
+    }
+
+    #moreDetailsBtn {
+        transition: color 0.2s ease;
+    }
+
+    #moreDetailsBtn:hover {
+        color: #4a8c3f !important;
+    }
+
+    /* Уменьшаем хитбокс клеток, сохраняя внешний вид */
+    .cell {
+        cursor: pointer;
+        position: relative;
+    }
+
+    /* Создаём внутренний элемент для хитбокса */
+    .cell::after {
+        content: '';
+        position: absolute;
+        top: 12%;
+        left: 12%;
+        width: 76%;
+        height: 76%;
+        background: transparent;
+        pointer-events: auto;
+        z-index: 20;
+    }
+
+    /* Оригинальный контент клетки не должен блокировать события */
+    .cell-letter {
+        pointer-events: none;
+    }
+
+    /* Убираем стандартный хитбокс у самой клетки */
+    .cell {
+        pointer-events: none;
+    }
+
+    /* Но события клика должны ловиться на внутреннем элементе */
+    .cell::after {
+        pointer-events: auto;
+    }
+
     /* .timer-display {
         font-size: 20px;
         font-weight: 600;
@@ -720,7 +898,11 @@
 <body>
 <div class="game-container" id="gameContainer">
     <div class="game-panel">
-        <h1>Сквордли</h1>
+        <div style="position: relative; display: flex; justify-content: center; align-items: center;">
+            <button id="rulesBtn" style="position: absolute; left: 0; background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; margin: 0; width: 40px;">❓</button>
+            <h1 style="flex: 1; text-align: center;">Сквордли</h1>
+            <button id="updateLogBtn" style="position: absolute; right: 0; background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; margin: 0; width: 40px;">📋</button>
+        </div>
 
         <div class="score-counter" id="wordCounterDisplay">0 / 0</div>
 
@@ -756,7 +938,7 @@
 
 <script>
     // ===================== НАСТРОЙКИ =====================
-    const SHOW_ALL_WORDS_BUTTON = true;
+    const SHOW_ALL_WORDS_BUTTON = false;
     const COMPLETED_LEVELS_KEY = 'skvordli_completed_levels';
     const LEVEL_PROGRESS_KEY = 'skvordli_level_progress';
     const RANDOM_GAME_KEY = 'skvordli_random_game';
@@ -764,71 +946,71 @@
     // ===================== ДАННЫЕ УРОВНЕЙ =====================
     const LEVELS = [
         {
-            id: 4,
+            id: 10,
             name: "🔡️ Алфавит",
-            description: "Первые 16 букв алфавита (R.I.P.  Ё)",
+            description: "Первые 16 букв алфавита",
             board: [
-                ['А', 'Б', 'В', 'Г'],
-                ['Д', 'Е', 'Ж', 'З'],
-                ['И', 'Й', 'К', 'Л'],
-                ['М', 'Н', 'О', 'П']
+                ['М', 'З', 'К', 'Б'],
+                ['Д', 'А', 'И', 'П'],
+                ['Й', 'В', 'Н', 'Г'],
+                ['Ж', 'Е', 'О', 'Л']
             ]
         },
         {
-            id: 5,
+            id: 11,
             name: "▪️ Мини",
             description: "Сколько слов поместится на поле 2х2? 2х2.",
             board: [
                 ['#', '#', '#', '#'],
-                ['#', 'К', 'А', '#'],
-                ['#', 'Р', 'И', '#'],
+                ['#', 'С', 'Р', '#'],
+                ['#', 'Т', 'О', '#'],
                 ['#', '#', '#', '#']
             ]
         },
-        {
-            id: 6,
-            name: "😎 Зумерборд",
-            description: "Хайп кринж оуджи буда спиннеры флекс эщкере свага антихайп",
-            board: [
-                ['Т', 'Р', 'Э', 'Ш'],
-                ['Х', 'А', 'Й', 'П'],
-                ['Ф', 'Р', 'И', 'К'],
-                ['С', 'К', 'У', 'Ф']
-            ]
-        },
-        {
-            id: 7,
-            name: "📖 Вавилонская библиотека",
-            description: "Говорят, что в этом пазле можно найти любую комбинацию букв, ну почти...",
-            board: [
-                ['И', 'Л', 'П', 'Н'],
-                ['А', 'О', 'Е', 'М'],
-                ['Р', 'Т', 'С', 'А'],
-                ['У', 'И', 'В', 'Г']
-            ]
-        },
-        {
-            id: 8,
-            name: "🤪 Брейнрот",
-            description: "Не могу перестать деградировать",
-            board: [
-                ['С', 'Д', 'В', 'Г'],
-                ['С', 'И', 'К', 'С'],
-                ['С', 'Е', 'В', 'Е'],
-                ['Е', 'Е', 'Е', 'Н']
-            ]
-        },
-        {
-            id: 9,
-            name: "♟️ Шахматная раскраска",
-            description: "8 О vs 8 согласных",
-            board: [
-                ['К', 'О', 'Д', 'О'],
-                ['О', 'В', 'О', 'П'],
-                ['Л', 'О', 'Р', 'О'],
-                ['О', 'Д', 'О', 'В']
-            ]
-        },
+        // {
+        //     id: 12,
+        //     name: "😎 Зумерборд",
+        //     description: "Хайп кринж оуджи буда спиннеры флекс эщкере свага антихайп",
+        //     board: [
+        //         ['Т', 'Р', 'Э', 'Ш'],
+        //         ['Х', 'А', 'Й', 'П'],
+        //         ['Ф', 'Р', 'И', 'К'],
+        //         ['С', 'К', 'У', 'Ф']
+        //     ]
+        // },
+        // {
+        //     id: 13,
+        //     name: "📖 Много слов",
+        //     description: "Не для казуалов",
+        //     board: [
+        //         ['Н', 'А', 'С', 'З'],
+        //         ['Л', 'К', 'Р', 'Е'],
+        //         ['Д', 'У', 'А', 'Т'],
+        //         ['О', 'Н', 'П', 'М']
+        //     ]
+        // },
+        // {
+        //     id: 14,
+        //     name: "♟️ Шахматная раскраска",
+        //     description: "8 О vs 8 согласных",
+        //     board: [
+        //         ['К', 'О', 'Д', 'О'],
+        //         ['О', 'В', 'О', 'П'],
+        //         ['Л', 'О', 'Р', 'О'],
+        //         ['О', 'Д', 'О', 'В']
+        //     ]
+        // },
+        // {
+        //     id: 8,
+        //     name: "🤪 Брейнрот",
+        //     description: "Не могу перестать деградировать",
+        //     board: [
+        //         ['С', 'Д', 'В', 'Г'],
+        //         ['С', 'И', 'К', 'С'],
+        //         ['С', 'Е', 'В', 'Е'],
+        //         ['Е', 'Е', 'Е', 'Н']
+        //     ]
+        // },
         // {
         //     id: 0,
         //     name: "🌲 Лесная поляна",
@@ -1037,8 +1219,14 @@
     let DICTIONARY = new Set();
     let DICTIONARY_ARRAY = [];
     let dictionaryLoaded = false;
+
+    let letCounter = new Array(32).fill(0);
+    let letDole = new Array(32).fill(0);
+    let totalLetters = 0;
+    let dls = 0;
     
     let board = [];
+    let boardMaybe = [];
     let selectedPath = [];
     let score = 0;
     let foundWordsSet = new Set();
@@ -1490,14 +1678,14 @@
         updateUI();
     }
 
-    const letterWeights = { 'А':0.087,'Б':0.014,'В':0.060,'Г':0.014,'Д':0.020,'Е':0.085,'Ж':0.007,'З':0.017,'И':0.076,'Й':0.013,'К':0.029,'Л':0.036,'М':0.043,'Н':0.056,'О':0.092,'П':0.036,'Р':0.054,'С':0.048,'Т':0.043,'У':0.032,'Ф':0.003,'Х':0.011,'Ц':0.004,'Ч':0.012,'Ш':0.023,'Щ':0.010,'Ъ':0.001,'Ы':0.020,'Ь':0.011,'Э':0.002,'Ю':0.017,'Я':0.024 };
+    let letterWeights = { 'А':0.095,'Б':0.017,'В':0.034,'Г':0.016,'Д':0.025,'Е':0.075,'Ж':0.007,'З':0.018,'И':0.082,'Й':0.006,'К':0.056,'Л':0.045,'М':0.026,'Н':0.064,'О':0.098,'П':0.031,'Р':0.064,'С':0.051,'Т':0.064,'У':0.022,'Ф':0.007,'Х':0.007,'Ц':0.012,'Ч':0.013,'Ш':0.008,'Щ':0.006,'Ъ':0.001,'Ы':0.007,'Ь':0.021,'Э':0.002,'Ю':0.002,'Я':0.014 };
     function getRandomLetterWeighted() { const rand = Math.random(); let accum = 0; for (const [letter, weight] of Object.entries(letterWeights)) { accum += weight; if (rand < accum) return letter; } return 'А'; }
 
-    class node { constructor() { this.term = 0; this.pref = 0; this.children = new Array(32).fill(-1); } }
+    class node { constructor() { this.term = 0; this.pref = 0; this.children = new Array(34).fill(-1); } }
     let trie = [new node()];
-    function insertToTrie(s) { for (const c of s) { if (c.charCodeAt(0) < 1072 || c.charCodeAt(0) > 1103) return 0; } let v = 0; for (const c of s) { trie[v].pref++; let cid = c.charCodeAt(0) - 1072; if (trie[v].children[cid] == -1) { trie.push(new node()); trie[v].children[cid] = trie.length - 1; } v = trie[v].children[cid]; } trie[v].term++; trie[v].pref++; }
-    function findInTrie(s) { for (const c of s) { if (c.charCodeAt(0) < 1072 || c.charCodeAt(0) > 1103) return false; } let v = 0; for (const c of s) { let cid = c.charCodeAt(0) - 1072; if (trie[v].children[cid] == -1) return false; v = trie[v].children[cid]; } return trie[v].term > 0; }
-    function prefInTrie(s) { for (const c of s) { if (c.charCodeAt(0) < 1072 || c.charCodeAt(0) > 1103) return false; } let v = 0; for (const c of s) { let cid = c.charCodeAt(0) - 1072; if (trie[v].children[cid] == -1) return false; v = trie[v].children[cid]; } return trie[v].pref > 0; }
+    function insertToTrie(s) { for (const c of s) { if (c.charCodeAt(0) < 1072 || c.charCodeAt(0) > 1105 || c.charCodeAt == 1104) return 0; } let v = 0; for (const c of s) { trie[v].pref++; let cid = c.charCodeAt(0) - 1072; if (trie[v].children[cid] == -1) { trie.push(new node()); trie[v].children[cid] = trie.length - 1; } v = trie[v].children[cid]; } trie[v].term++; trie[v].pref++; }
+    function findInTrie(s) { for (const c of s) { if (c.charCodeAt(0) < 1072 || c.charCodeAt(0) > 1105 || c.charCodeAt == 1104) return false; } let v = 0; for (const c of s) { let cid = c.charCodeAt(0) - 1072; if (trie[v].children[cid] == -1) return false; v = trie[v].children[cid]; } return trie[v].term > 0; }
+    function prefInTrie(s) { for (const c of s) { if (c.charCodeAt(0) < 1072 || c.charCodeAt(0) > 1105 || c.charCodeAt == 1104) return false; } let v = 0; for (const c of s) { let cid = c.charCodeAt(0) - 1072; if (trie[v].children[cid] == -1) return false; v = trie[v].children[cid]; } return trie[v].pref > 0; }
 
         // ===================== TELEGRAM БОТ =====================
     
@@ -1552,24 +1740,46 @@
 
     async function loadDictionary() {
         try {
-            const response = await fetch('russian.dic');
+            const response = await fetch('nouns2.txt');
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const text = await response.text();
-            const allWords = text.split('\n').filter(w => w.length >= 4 && w.length <= 16);
+            const allWords = text.split('\r\n').filter(w => w.length >= 4 && w.length <= 16);
             DICTIONARY = new Set(allWords);
             DICTIONARY_ARRAY = Array.from(DICTIONARY);
             for (const s of DICTIONARY_ARRAY) insertToTrie(s);
+            let num = 0;
+            for (const s of DICTIONARY_ARRAY) {
+                for (const c of s) {
+                    num = c.charCodeAt(0);
+                    if (1072 <= num && num <= 1103) {
+                        letCounter[num - 1072]++;
+                    }
+                }
+            }
+            for (const x of letCounter) {
+                totalLetters += x;
+            }
+            for (let i = 0; i < 32; i++) {
+                letDole[i] = letCounter[i] / totalLetters;
+                dls += letDole[i];
+                letterWeights[String.fromCharCode('А'.charCodeAt(0) + i)] = letDole[i];
+            }
             dictionaryLoaded = true;
             bottomMessageDiv.textContent = `✅ Словарь загружен! ${DICTIONARY.size} слов (4-16 букв)`;
             bottomMessageDiv.className = "bottom-message info";
             newGameBtn.disabled = false;
             levelsBtn.disabled = false;
             if (SHOW_ALL_WORDS_BUTTON) document.getElementById("showAllBtn").disabled = false;
+            // Проверяем, не отправляли ли уже приветствие
             if (!localStorage.getItem('skvordli_welcome_sent')) {
                 const playerId = getPlayerId();
                 const message = `🎉 <b>НОВЫЙ ИГРОК!</b>\n\n👤 Бро №${playerId}\n🚪 Впервые зашёл в игру\n⏰ ${new Date().toLocaleString()}`;
-                sendToTelegram(message);
-                localStorage.setItem('skwelcome_sent', 'true');
+                await sendToTelegram(message);
+                localStorage.setItem('skvordli_welcome_sent', 'true');
+            }
+            if (!localStorage.getItem('skvordli_rules_shown')) {
+                showRulesModal();
+                localStorage.setItem('skvordli_rules_shown', 'true');
             }
             setTimeout(() => {
                 const loaded = loadRandomGameProgress();
@@ -1628,6 +1838,26 @@
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 4; j++) {
                 if (board[i][j] === '') board[i][j] = getRandomLetterWeighted();
+            }
+        }
+        return board;
+    }
+
+    function shuffle(arr) {
+        for (let i = 0; i < arr.length; i++) {
+            let j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    function generateSpecificBoard() {
+        let board = Array(4).fill().map(() => Array(4).fill('#'));
+        lst = ['А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й', 'К', 'Л', 'М', 'Н', 'О', 'П'];
+        shuffle(lst);
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
+                if (board[i][j] === '#') board[i][j] = lst[i * 4 + j];
             }
         }
         return board;
@@ -1932,17 +2162,66 @@
     document.addEventListener("dragstart", e => e.preventDefault());
     window.addEventListener("resize", () => updateCanvasAfterRender());
 
+    const rulesBtn = document.getElementById("rulesBtn");
+    if (rulesBtn) {
+        rulesBtn.addEventListener("click", showRulesModal);
+    }
+
     function newGame() {
         if (!dictionaryLoaded) return;
         if (currentFadePhase !== 0) instantCancelAndReset();
         localStorage.removeItem(RANDOM_GAME_KEY);
         currentLevelId = null;
-        board = generateBoardWithSeededWords(0);
-        allBoardWords = findAllWordsOnBoardForBoard(board);
-        while (allBoardWords.size < 10) {
-            board = generateBoardWithSeededWords(0);
-            allBoardWords = findAllWordsOnBoardForBoard(board);
+
+        let hasCompletedCells = true;
+        let atts = 0;
+        let mx = -1;
+
+        while (hasCompletedCells) {
+            boardMaybe = generateBoardWithSeededWords(0);
+            //boardMaybe = generateSpecificBoard();
+            allBoardWords = findAllWordsOnBoardForBoard(boardMaybe);
+            
+            hasCompletedCells = false
+            
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    // Временно инициализируем подсказки (только для проверки)
+                    const tempStartCount = Array(4).fill().map(() => Array(4).fill(0));
+                    const tempPassCount = Array(4).fill().map(() => Array(4).fill(0));
+                    const tempWordToStartCell = new Map();
+                    const tempWordToPassCells = new Map();
+                    
+                    // Инициализируем подсказки для временной проверки
+                    const wordsArray = Array.from(allBoardWords);
+                    for (const word of wordsArray) {
+                        const paths = findAllPathsForWord(boardMaybe, word);
+                        if (paths.length === 0) continue;
+                        const chosenPath = paths[0];
+                        const passCells = chosenPath.map(p => ({ row: p.row, col: p.col }));
+                        for (const cell of passCells) {
+                            tempPassCount[cell.row][cell.col]++;
+                        }
+                    }
+                    
+                    if (tempPassCount[i][j] === 0) {
+                        hasCompletedCells = true;
+                        break;
+                    }
+                }
+                if (hasCompletedCells) break;
+            }
+            if (!hasCompletedCells) {
+                board = boardMaybe;
+            }
+            atts++;
         }
+
+        if (mx == -1) {
+            board = boardMaybe;
+        }
+        allBoardWords = findAllWordsOnBoardForBoard(board);
+
         hintLevel25Reached = false;
         hintLevel50Reached = false;
         marker25.classList.remove("hidden");
@@ -2025,6 +2304,138 @@
         stopTimer();
         timerSeconds = 0;
         updateTimerDisplay();
+    }
+
+    // ===================== ОКОШКО ПРАВИЛ =====================
+    function showRulesModal() {
+        const existingModal = document.querySelector('.rules-modal');
+        if (existingModal) existingModal.remove();
+        
+        const modal = document.createElement("div");
+        modal.className = "rules-modal";
+        modal.innerHTML = `
+            <div class="rules-modal-content">
+                <div class="rules-modal-header">
+                    <span class="rules-modal-title">📖 Правила игры</span>
+                    <span class="rules-modal-close">✕</span>
+                </div>
+                <div class="rules-text" id="rulesText">
+                    <p>🎮 <strong>Как играть?</strong><br>
+                    Зажимаешь ЛКМ (или палец на телефоне) и проводишь по буквам, чтобы составить слово. Перемещаться можно в соседние по стороне или углу клетки. Чтобы проверить слово просто отпусти палец.</p>
+                    
+                    <p>🔤 <strong>Какие слова засчитываются?</strong><br>
+                    Нарицательные существительные в начальной форме длиной от 4 букв, кроме разговорных.</p>
+                    
+                    <p>🏆 <strong>Цель</strong><br>
+                    Найти все слова на поле. Чем быстрее и точнее — тем лучше результат!</p>
+                </div>
+                <div id="detailedRules" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #e0e0e0;">
+                    <div class="rules-text">
+                        <p>📗 <strong>Словарь</strong><br>
+                        В игре используется словарь Ожегова, существительные из которого отобраны с помощью pymorphy3. Ввиду негарантированной точности этого метода некоторые слова могут добавляться или удаляться отдельно в будущих обновлениях.</p>
+
+                        <p>🆎 <strong>Буквы</strong><br>
+                        Буквы, которые реже встречаются в словаре, реже будут вам встречаться на случайных полях. Также важно отметить, что Е = Ё в этой игре.</p>
+
+                        <p>✨ <strong>Счёт</strong><br>
+                        За каждое найденное слово вы получаете счёт, который показывается вместе с отгаданным словом. Чем длиннее слово - тем больше счёт. Исходя из этого счёта заполняется шкала прогресса.</p>
+
+                        <p>⭐ <strong>Подсказки</strong><br>
+                        • На <strong>25% прогресса</strong> появятся <span style="color: #4a8c3f;">зелёные числа</span> в левом нижнем углу клеток — они показывают, сколько ещё не найденных слов начинается с этой буквы.<br>
+                        • На <strong>50% прогресса</strong> появятся <span style="color: #999;">серые числа</span> в правом нижнем углу — сколько не найденных слов проходит через эту клетку.<br>
+                        • Когда число в правом углу становится нулём, клетка становится полупрозрачной — через неё больше нельзя составить слово (это может произойти и до того, как подсказка была получена).</p>
+                        
+                        <p>💾 <strong>Сохранение прогресса и уровни</strong><br>
+                        Прогресс автоматически сохраняется в браузере. Также в игре есть кастомные уровни (во вкладке "уровни" снизу), прогресс по каждому из них сохраняется отдельно.<br>
+                        ВАЖНО! Если вы играли на случайно сгенерированном поле, потом зашли в уровень и теперь хотите вернуться к тому случайному полю, то просто обновите страницу, но НЕ нажимайте кнопку "новая игра".</p>
+                        
+                        <p>📊 <strong>Статистика</strong><br>
+                        При нажатии на счётчик слов вверху открывается окно статистики, сейчас там отображается информация о том сколько слов каждой длины осталось и показаны найденные вами слова.</p>
+
+                        <p>🎯 <strong>Точность и время</strong><br>
+                        Когда вы находите все слова, в победном окне отображается время, которое вы потратили на это поле и точность. Точность зависит от доли допущенных вами ошибок к количеству слов на поле. Ошибкой считается попытка отгадать слово, которого нет в словаре. При этом ошибкой НЕ считается попытка отгадать слово длины 3 и меньше, повтор уже отгаданного слова.</p>
+                    </div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <span id="moreDetailsBtn" style="font-size: 12px; color: #999; cursor: pointer; text-decoration: underline; display: inline-block; margin-bottom: 10px;">📖 подробнее</span>
+                </div>
+                <button class="rules-btn" id="rulesConfirmBtn">🚀 Вперёд!</button>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        const closeBtn = modal.querySelector(".rules-modal-close");
+        closeBtn.addEventListener("click", () => modal.remove());
+        
+        const confirmBtn = document.getElementById("rulesConfirmBtn");
+        confirmBtn.addEventListener("click", () => modal.remove());
+        
+        // Логика раскрытия подробных правил
+        const moreDetailsBtn = document.getElementById("moreDetailsBtn");
+        const detailedRules = document.getElementById("detailedRules");
+        let isExpanded = false;
+        
+        moreDetailsBtn.addEventListener("click", () => {
+            if (!isExpanded) {
+                detailedRules.style.display = "block";
+                moreDetailsBtn.innerHTML = "📖 свернуть";
+                moreDetailsBtn.style.color = "#4a8c3f";
+                isExpanded = true;
+            } else {
+                detailedRules.style.display = "none";
+                moreDetailsBtn.innerHTML = "📖 подробнее";
+                moreDetailsBtn.style.color = "#999";
+                isExpanded = false;
+            }
+        });
+        
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) modal.remove();
+        });
+    }
+
+    // ===================== ОКОШКО АПДЕЙТ-ЛОГА =====================
+    function showUpdateLogModal() {
+        const existingModal = document.querySelector('.updatelog-modal');
+        if (existingModal) existingModal.remove();
+        
+        const modal = document.createElement("div");
+        modal.className = "updatelog-modal";
+        modal.innerHTML = `
+            <div class="updatelog-modal-content">
+                <div class="updatelog-modal-header">
+                    <span class="updatelog-modal-title">📋 История обновлений</span>
+                    <span class="updatelog-modal-close">✕</span>
+                </div>
+                <div class="update-log-content">
+                    <div class="update-log-version">Версия 1.3 — 05.06.26</div>
+                    <ul class="update-log-list">
+                        <li>Словарь заменён на словарь Ожегова, из него отобраны только существительные</li>
+                        <li>Некоторые уровни изменены, а некоторые удалены</li>
+                        <li>Добавлены правила</li>
+                        <li>Добавлена история обновлений</li>
+                        <li>Уменьшен хитбокс клеток с буквами, теперь соединять диагональные клетки проще</li>
+                        <li>Теперь при генерации случайного поля гранатируется, что через каждую клетку проходит хотя бы 1 слово</li>
+                    </ul>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        const closeBtn = modal.querySelector(".updatelog-modal-close");
+        closeBtn.addEventListener("click", () => modal.remove());
+        
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) modal.remove();
+        });
+    }
+
+    // Кнопка апдейт-лога
+    const updateLogBtn = document.getElementById("updateLogBtn");
+    if (updateLogBtn) {
+        updateLogBtn.addEventListener("click", showUpdateLogModal);
     }
     
     wordCounterDisplay.addEventListener("click", () => { if (dictionaryLoaded && allBoardWords.size > 0) showStatsModal(); });
